@@ -7,6 +7,5 @@ bash
 
 COPY . /app
 WORKDIR /app
-RUN pip3 install -r requirements.txt
-CMD [ "python3", "populate-database.py"]
+RUN pip3 install -r requirements.txt && python3 populate-database.py
 CMD [ "python3", "app.py"]
