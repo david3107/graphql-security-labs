@@ -41,7 +41,7 @@
     	<center> 		
 			<img src="/static/img/logo.svg" width="60%" height="60%"/> 		
 			<br/> 		
-			<p style="color:#515594; font-size:1.0em;"><a href="https://github.com/blabla1337/skf-flask" style="color:#515594; font-size:0.5em;">DefDevEU Graph QL Blog</a></p>  	 			
+			<p style="color:#515594; font-size:1.0em;"><a href="https://github.com/defdeveu/" style="color:#515594; font-size:0.5em;">DefDevEU Graph QL Blog</a></p>  	 			
 		</center>
 	</div><!--/.sidebar-->
 		
@@ -56,25 +56,11 @@
 			</div>
 		</div><!--/.row-->
 				
-		
- <div class="row">
-			<div class="col-lg-12">
-				<div class="panel panel-default">
-					<div class="panel-heading">{{title}}</div>
-					<div class="panel-body">
-						<div class="col-md-12">
-									<img src="/static/img/avatar.png" width="20px" height="20px"/>	<strong>{{username}}</strong>
-						</div>
 
-						<div class="col-md-12" style="top:10px">
-							{{body}}
-						</div>
-					</div>
-				</div>
-			</div><!-- /.col-->
- </div><!-- /.row --> 
+<div id = "posts">
 
 
+</div><!-- /.posts -->
 	
 	</div><!--/.main-->
 
@@ -102,17 +88,47 @@
 	</script>	
 
 	<script>
+	{% raw %}
 
+		var app = document.querySelector('#posts');
 		fetch('/graphql', {
   			method: 'POST',
   			headers: { 'Content-Type': 'application/json' },
-  			body: JSON.stringify({query : "{{allPosts {edges {node {title body users { username }}}}}}"}) 
+  			body: JSON.stringify({query : "{allPosts {edges {node {title body users { username }}}}}"}) 
 
 		})
   		.then(res => res.json())
-  		.then(res => console.log(res.data));
+  		.then(json => {
+	  		console.log(json);
+	  		let els = json.data.allPosts.edges.map(x => {
+	  		
+	  		return `
+	   		<div class="row">
+				<div class="col-lg-12">
+					<div class="panel panel-default">
+						<div class="panel-heading">${x.node.title}</div>
+						<div class="panel-body">
+							<div class="col-md-12">
+										<img src="/static/img/avatar.png" width="20px" height="20px"/>	<strong>${x.node.users.username}</strong>
+							</div>
 
-	</script>
+							<div class="col-md-12" style="top:10px">
+								${x.node.body}
+							</div>
+						</div>
+					</div>
+				</div>
+	 	</div> 
+	 	`
+	  })
+
+	  app.innerHTML=els.join("\n");
+	  
+	})
+  .catch(console.error);
+  {% endraw %}
+
+</script>
 </body>
 
 </html>
