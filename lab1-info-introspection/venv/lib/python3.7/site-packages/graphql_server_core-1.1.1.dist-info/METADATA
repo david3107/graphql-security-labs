@@ -1,0 +1,57 @@
+Metadata-Version: 2.1
+Name: graphql-server-core
+Version: 1.1.1
+Summary: GraphQL Server tools for powering your server
+Home-page: https://github.com/graphql-python/graphql-server-core
+Author: Syrus Akbary
+Author-email: me@syrusakbary.com
+License: MIT
+Download-URL: https://github.com/graphql-python/graphql-server-core/releases
+Keywords: api graphql protocol rest
+Platform: any
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Libraries
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: Implementation :: PyPy
+Classifier: License :: OSI Approved :: MIT License
+Requires-Dist: graphql-core (>=2.1)
+Requires-Dist: promise
+
+GraphQL-Server
+==============
+
+|Build Status| |Coverage Status| |PyPI version|
+
+GraphQL Server core package.
+
+Integrations
+------------
+
+GraphQL Server powers the following integrations
+
++---------------------------+----------------------------------------------------------------------------+
+| Server integration        | Package                                                                    |
++===========================+============================================================================+
+| Django                    | `graphene-django <https://github.com/graphql-python/graphene-django/>`__   |
++---------------------------+----------------------------------------------------------------------------+
+| Flask                     | `flask-graphql <https://github.com/graphql-python/flask-graphql/>`__       |
++---------------------------+----------------------------------------------------------------------------+
+| Sanic                     | `sanic-graphql <https://github.com/graphql-python/sanic-graphql/>`__       |
++---------------------------+----------------------------------------------------------------------------+
+| WebOb (Pyramid, Pylons)   | `webob-graphql <https://github.com/graphql-python/webob-graphql/>`__       |
++---------------------------+----------------------------------------------------------------------------+
+
+.. |Build Status| image:: https://travis-ci.org/graphql-python/graphql-server-core.svg?branch=master
+   :target: https://travis-ci.org/graphql-python/graphql-server-core
+.. |Coverage Status| image:: https://coveralls.io/repos/graphql-python/graphql-server-core/badge.svg?branch=master&service=github
+   :target: https://coveralls.io/github/graphql-python/graphql-server-core?branch=master
+.. |PyPI version| image:: https://badge.fury.io/py/graphql-server-core.svg
+   :target: https://badge.fury.io/py/graphql-server-core
+
+
