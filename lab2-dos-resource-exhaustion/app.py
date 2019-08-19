@@ -52,7 +52,7 @@ class Post(db.Model):
     title = db.Column(db.String(256), index=True)
     body = db.Column(db.Text)
     author_id = db.Column(db.Integer, db.ForeignKey('users.uuid'))
-    #author = db.relationship('User', backref='post')
+    author = db.relationship('User', backref='post')
     
     def __repr__(self):
         return '<Post %r>' % self.title
@@ -90,7 +90,7 @@ def index():
 
     #Implement logic to retrieve posts
 
-    return render_template("index.html",username = "jhon", body="KADJ SDKLASJDKASJ SKDJ S",title="Wow I did not see this" )
+    return render_template("index.html" )
 
 
 if __name__ == '__main__':
