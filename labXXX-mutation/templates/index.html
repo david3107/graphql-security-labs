@@ -101,7 +101,7 @@
 		fetch('/graphql', {
   			method: 'POST',
   			headers: { 'Content-Type': 'application/json' },
-  			body: JSON.stringify({query : "{allPosts {edges {node {title body users { username }}}}}"}) 
+  			body: JSON.stringify({query : "{allPosts {edges {node {title body author { username }}}}}"}) 
 
 		})
   		.then(res => res.json())
@@ -116,7 +116,7 @@
 						<div class="panel-heading">${x.node.title}</div>
 						<div class="panel-body">
 							<div class="col-md-12">
-										<img src="/static/img/avatar.png" width="20px" height="20px"/>	<strong>${x.node.users.username}</strong>
+										<img src="/static/img/avatar.png" width="20px" height="20px"/> ${x.node.author.username}	<strong></strong>
 							</div>
 
 							<div class="col-md-12" style="top:10px">
@@ -150,6 +150,8 @@
   		.then(res => res.json())
   		.then(json => {
 	  		console.log(json);
+	  		location.reload();
+
 	  	})
   		.catch(console.error);
   }
