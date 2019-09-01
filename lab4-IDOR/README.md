@@ -1,160 +1,67 @@
-# GraphQL Introspection
+# GraphQL IDOR 
 
 The application uses GraphQL to retrieve Users and Posts for the DefDev new blog. 
 
 > Run the application 
 
 ```sh
-docker build . -t graphql/intro && docker run -ti -p 5000:5000 graphql/intro
+docker build . -t graphql/idor && docker run -ti -p 5000:5000 graphql/idor
 ```
 
 Great now the app is running. Browse to `http://0.0.0.0:5000/` 
 
 ## Discovery 
 
-As soon as we browse on `http://0.0.0.0:5000` we see the few posts published by 2 users
+As soon as we browse on `http://0.0.0.0:5000` we see that now our app implements a login screen to support multiple users 
 
 <SCREENSHOT>
+
+We already registered a user , the famous Jhon Doe and we can authneticate with the credentials 
+
+```
+jhondoe
+password1
+
+``` 
+
+Now that we are in, we discover that every time a user logs in, the application sets a cookie called
+
+`X-Api-Key`
+
+that is used by the app to authenticate the keep the session active and recognize the user. 
+
+The API key can be used also to retrieve info from the blog. But this is another story. 
+
+
+What we want to do, is to find a way to authenticate us other users using an IDOR vulnerability.  
 
 
 ## Exploitation 
 
-We want to use the introspection feature (enabled) in this case, to understand more about what queries are supported. 
+What's new in this application is that an user can see his settings, browsing to the page:
 
+`http://0.0.0.0:5000/settings`
 
-Let' use the `GraphiQL` UI to send queries to the backend and discover what is available. 
-
-Go to `http://0.0.0.0:5000/graphql`. We can query the generic `__schema` using:
-
-```
-{
-  __schema {
-    types {
-      name
-    }
-  }
-}
-```
-
-The application gives us interesting `Types`. Let's explore the `UserObject` one. If we build a more complex query we can ask for more information, exploring every field available. Let's send the following:
+of course only if authenticated. But how does this page retrieve the information is crucial. If we intercept the traffic we can see that the application sends a GraphQL query to the backend to ask for the information we see in the page. The query looks like this: 
 
 ```
 {
-  __type(name: "UserObject") {
-    name
-    fields {
-      name
-      type {
-        name
-        kind
-        ofType {
-          name
-          kind
-        }
-      }
-    }
-  }
-}
-```
-In this case, for each field we we want to know what are the subfields and of which type.
-
-The application will answer with:
+ 					singleUser (user: 1) {
+    				apiKey
+    				name
+    				surname
+    				dateOfBirth
+  				}
+			}
 
 ```
-{
-  "data": {
-    "__type": {
-      "name": "UserObject",
-      "fields": [
-        {
-          "name": "uuid",
-          "type": {
-            "name": null,
-            "kind": "NON_NULL",
-            "ofType": {
-              "name": "ID",
-              "kind": "SCALAR"
-            }
-          }
-        },
-        {
-          "name": "username",
-          "type": {
-            "name": "String",
-            "kind": "SCALAR",
-            "ofType": null
-          }
-        },
-        {
-          "name": "isAdmin",
-          "type": {
-            "name": "Boolean",
-            "kind": "SCALAR",
-            "ofType": null
-          }
-        },
-        {
-          "name": "posts",
-          "type": {
-            "name": "PostObjectConnection",
-            "kind": "OBJECT",
-            "ofType": null
-          }
-        },
-        {
-          "name": "id",
-          "type": {
-            "name": null,
-            "kind": "NON_NULL",
-            "ofType": {
-              "name": "ID",
-              "kind": "SCALAR"
-            }
-          }
-        }
-      ]
-    }
-  }
-}
-```
-> BINGO! We have some good information here
 
-We can see that there is an interesting field `isAdmin`, that we can use to find out who is the admin of the application. 
- 
+> Knowing that, use the IDOR vulnerability to authenticate as another user
 
-Now we just need to query all the Users. To do that, let's see if there is a query available. We can use the following syntax:
 
-```
-query availableQueries {
-  __schema {
-    queryType {
-      fields {
-        name
-        description
-      }
-    }
-  }
-}
-```
-
-That will give us the `allUsers` query. Now we need to understand what are the fields. We can do that in different ways, using GraphiQL or doing some more introspection. In this case we use GraphiQL, sending the following query:
-
-```
-{
-  allUsers {
-    edges {
-      node {
-        username
-        isAdmin
-      }
-    }
-  }
-}
-
-```
 
 ## Fix
 
-Implement authorization on graphql endpoint. Although authenticated users could query the information, you should not map sensitive information into the type defined into the schema.
+Implement authorization on graphql endpoint. Although authenticated users could query the information, you should validate that the requestor of the information is actually the legit one, and use UUID instead of ID as Int.
 
 
