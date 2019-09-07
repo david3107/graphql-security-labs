@@ -143,10 +143,10 @@
 
  	function queryUserDetails(){
 		fetch('/graphql', {
+			u = $('#username').val()
   			method: 'POST',
   			headers: { 'Content-Type': 'application/json' },
-  			body: JSON.stringify({query : `mutation{ createPost(input: {body: "This is a new post" , title: "This is a new title", authorId: 2}) {post {body authorId title}}}`}) 
-
+  			body: JSON.stringify({query : `{isSqlUp(ip:"`+ ip +`")}`}) 
 		})
   		.then(res => res.json())
   		.then(json => {
