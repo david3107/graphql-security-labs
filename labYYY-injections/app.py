@@ -86,14 +86,24 @@ class CreatePost(graphene.Mutation):
         db.session.commit()
         return CreatePost(post=post)
 
-class CheckSqlStatus(graphene.ObjectType):
+class Query(graphene.ObjectType):
     """query the status of a server after ping"""
     is_sql_up = graphene.String(ip=graphene.String(required=True))
 
+    @staticmethod
     def resolve_is_sql_up(self,info,ip):
         #exec ping command against the IP; return status code
         host,port = ip.split(':')
         res = os.system('nc -w 3 ' + host + " " + port)
+        return res 
+
+    """query User information"""
+    get_user = graphene.Field(UserObject, username=graphene.String(required=True))
+
+    @staticmethod
+    def resolve_get_user(self,info,username):
+        #sql query
+        res = db.session.execute("select * form users;")
         return res
 
 #4
@@ -101,7 +111,7 @@ class Mutation(graphene.ObjectType):
     create_post = CreatePost.Field()
 
 
-schema = graphene.Schema(query=CheckSqlStatus,mutation=Mutation)
+schema = graphene.Schema(query=Query,mutation=Mutation)
 
 
 # Routes
