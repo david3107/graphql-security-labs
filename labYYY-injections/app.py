@@ -103,7 +103,7 @@ class Query(graphene.ObjectType):
     @staticmethod
     def resolve_get_user(self,info,username):
         #sql query
-        res = db.session.execute("select * form users;")
+        res = db.session.execute("select * form users where username ='" + username + "';")
         return res
 
 #4
