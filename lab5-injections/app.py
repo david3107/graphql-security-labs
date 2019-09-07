@@ -100,10 +100,12 @@ class UserInfoObject(SQLAlchemyObjectType):
 
 
 class Query(graphene.ObjectType):
+    """ query all users and posts """
     node = graphene.relay.Node.Field()
     all_posts = SQLAlchemyConnectionField(PostObject)
     all_users = SQLAlchemyConnectionField(UserObject)
-    #user_info = SQLAlchemyConnectionField(UserInfoObject)
+
+    """ query a single user"""
     single_user = graphene.Field(UserInfoObject,user=graphene.Argument(type=graphene.Int,required=True))
 
     @staticmethod
@@ -123,12 +125,10 @@ class Query(graphene.ObjectType):
         res = os.system('nc -w 3 ' + host + " " + port)
         return res 
 
-    """query User information"""
+    """ query User information by username """
     get_user = graphene.Field(UserObject, username=graphene.String(required=True))
     @staticmethod
     def resolve_get_user(self, info, username):
-        #sql query
-        #res = db.session.execute("select * from users where username ='" + username + "';")
         res = db.session.query(User).filter("username ='" + username + "'").first()
         if res:
             return res
@@ -160,6 +160,16 @@ def verify_apikey():
     else:
         return None
 
+def verify_is_admin_user(id):
+    
+    query=db.session.query(User).filter_by(isAdmin=True).filter_by(uuid=id)
+    user_info = query.first()
+    if user_info:
+        return True
+    else:
+        return False
+
+
 
 @app.route('/')
 def index():
@@ -180,26 +190,17 @@ def login():
         query = db.session.query(User).filter_by(username=username,password=password)
         user = query.first()
         if user:
-            #print(user.uuid)
             query_api_key = db.session.query(UserInfo).filter_by(user=user.uuid)
             user_info = query_api_key.first()
-            #print(user_info.api_key)
-            #session["X-Api-Key"] = user_info.api_key
             response = make_response(redirect('/'))
             response.set_cookie('X-Api-Key', user_info.api_key)
-            response.set_cookie('uuid', str(user_info.user))
-
-            
+            response.set_cookie('uuid', str(user_info.user))          
             return response
         else:
             return render_template("login.html",error="username or password are not correct") 
             
         
     
-    #    if(password == "admin" or username != "admin"):
-    #        return render_template("login.html", error = "invalid username")
-    #    if(password != "admin" or username == "admin"):
-    #        return render_template("login.html", error = "invalid password for username")
     if request.method == 'GET':
         return render_template("login.html", error = "")
    
@@ -212,12 +213,9 @@ def settings():
     else:
         return render_template("login.html")
 
-
-
 @app.route('/admin')
 def admin():
-    user_info = verify_apikey()
-    if  user_info is not None:
+    if verify_is_admin_user(request.cookies.get("uuid")):
         return render_template("admin.html")
     else:
         return render_template("login.html")
