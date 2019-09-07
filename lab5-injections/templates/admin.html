@@ -54,7 +54,7 @@
 			
 			<div class="row">
 				<div class="col-lg-12">
-					<h1 class="page-header"></h1>
+					<h1 class="page-header">Adminisrator panel</h1>
 				</div>
 			</div><!--/.row-->
 					
@@ -63,28 +63,29 @@
 
 			<div class="row" id="actions">
 
-				<div class="col-sm-3 col-lg-4 ">
+				<div class="col-sm-6 col-lg-6 ">
 					<span> Check SQL Server Status:</span>
 					<form class="check-server"  >
 					  <label for="ip">SQL Server IP:port</label>
 					  <input type="text" class="form-control" id="ip"> <br>
-					  <button type="button" class="btn btn-primary btn-sm" onclick="checkServerStatus()" >Submit</button>
+					  <button type="button" class="btn btn-primary btn-sm" onclick="checkServerStatus(); return false;" >Submit</button>
 					</form>
 				</div>
 
-				<div class="col-sm-3 col-lg-4 ">
+				<div class="col-sm-6 col-lg-6 ">
 					<span> Query User detiails:</span>
-					<form class="check-server" onsubmit="queryUserDetails()" >
+					<form class="check-server"  >
 					  <label for="username">Username:</label>
 					  <input type="username" class="form-control" id="username"> <br>
-					  <button type="submit" class="btn btn-primary btn-sm" >Submit</button>
+					  <button type="submit" class="btn btn-primary btn-sm" onclick="queryUserDetails(); return false;">Submit</button>
 					</form>
 				</div>
 
 			</div><!-- /.actions -->
 
 			<div class="row" id="result">
-				<div class="col-sm-3 col-lg-4">
+				<br /><br />
+				<div class="col-sm-12 col-lg-12 ">
 					<div class="panel panel-default">
 						<div class="panel-heading">Results</div>
 							<div class="panel-body">
@@ -127,9 +128,6 @@
   			method: 'POST',
   			headers: { 'Content-Type': 'application/json' },
   			body: JSON.stringify({query : `{isSqlUp(ip:"`+ ip +`")}`}) 
-
-  			
-
 		})
   		.then(res => res.json())
   		.then(json => {
@@ -138,25 +136,22 @@
 
 	  	})
   		.catch(console.error);
-  		return false;
  	}
 
  	function queryUserDetails(){
+ 		u = $('#username').val()
 		fetch('/graphql', {
-			u = $('#username').val()
   			method: 'POST',
   			headers: { 'Content-Type': 'application/json' },
-  			body: JSON.stringify({query : `{isSqlUp(ip:"`+ ip +`")}`}) 
+  			body: JSON.stringify({query : `{getUser(username:"`+ u +`"){id, username}}`}) 
 		})
   		.then(res => res.json())
   		.then(json => {
 	  		console.log(json);
-	  		$('#result-text').text(json)
-	  		location.reload();
-
+	  		$('#result-text').text("Info retrieved: " + json.data.getUser)
 	  	})
   		.catch(console.error);
-  		return false;
+  		
  	}
 
 

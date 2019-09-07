@@ -91,7 +91,7 @@ class Query(graphene.ObjectType):
     is_sql_up = graphene.String(ip=graphene.String(required=True))
 
     @staticmethod
-    def resolve_is_sql_up(self,info,ip):
+    def resolve_is_sql_up(self, info, ip):
         #exec ping command against the IP; return status code
         host,port = ip.split(':')
         res = os.system('nc -w 3 ' + host + " " + port)
@@ -101,10 +101,16 @@ class Query(graphene.ObjectType):
     get_user = graphene.Field(UserObject, username=graphene.String(required=True))
 
     @staticmethod
-    def resolve_get_user(self,info,username):
+    def resolve_get_user(self, info, username):
         #sql query
-        res = db.session.execute("select * form users where username ='" + username + "';")
-        return res
+        #res = db.session.execute("select * from users where username ='" + username + "';")
+        res = db.session.query(User).filter("username ='" + username + "'").first()
+        if res:
+            print ("#####")
+            print(type(res))
+            return res
+        else:
+            return None;
 
 #4
 class Mutation(graphene.ObjectType):
