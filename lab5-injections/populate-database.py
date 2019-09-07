@@ -9,6 +9,7 @@ user5 = User(username='user5', password="password1444")
 user6 = User(username='user6', password="password111")
 user7 = User(username='user7', password="password12")
 admin = User(username='admin', password="password444555")
+admin.isAdmin = True
 john.isAdmin = False
 info_john = UserInfo(name="Jhon", surname="Doe", date_of_birth="01/09/1985", api_key="klaSKJDOA83847JSDskdjajeb39",user="1")
 info_user1 = UserInfo(name="Marc", surname="Zucker", date_of_birth="01/09/1985", api_key="klajd;aihd9[0jdioha",user="3")
