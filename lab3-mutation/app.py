@@ -85,7 +85,7 @@ class CreatePostInput(graphene.InputObjectType, PostAttribute):
 
 
 class CreatePost(graphene.Mutation):
-    """Mutation to create a person."""
+    """Mutation to create a post."""
     post = graphene.Field(lambda: PostObject, description="Post created by this mutation.")
 
     class Arguments:
