@@ -1,7 +1,7 @@
 # GraphQL Resource Exhaustion
 
 
-The application uses GraphQL to retrieve Users and Posts for the DefDev new blog. 
+The application uses GraphQL to retrieve Users and Posts for the defdev.eu new blog. 
 
 > Run the application 
 
