@@ -6,7 +6,7 @@ import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
 from flask_graphql import GraphQLView
 from flask_httpauth import HTTPBasicAuth
-
+from sqlalchemy.sql import text 
 
 
 auth = HTTPBasicAuth()
@@ -129,7 +129,7 @@ class Query(graphene.ObjectType):
     get_user = graphene.Field(UserObject, username=graphene.String(required=True))
     @staticmethod
     def resolve_get_user(self, info, username):
-        res = db.session.query(User).filter("username ='" + username + "'").first()
+        res = db.session.query(User).filter(text("username ='" + username + "'")).first()
         if res:
             return res
         else:

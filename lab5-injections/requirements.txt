@@ -5,3 +5,4 @@ flask-sqlalchemy
 graphene 
 graphene-sqlalchemy
 flask_httpauth
+sqlalchemy
