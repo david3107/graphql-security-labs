@@ -14,3 +14,9 @@ GraphQL is quickly becoming the alternative to REST API, being able to request a
 
 The workshop is meant for developers, architects and security folks
 
+## Interested in organizing a private workshop? 
+
+Check our full program here: https://1337.dcodx.com/trainings/workshops
+
+Contact us at: <info@dcodx.com>
+
