@@ -4,7 +4,10 @@ RUN apk update --no-cache && apk add python3 \
   python3-dev \
   py3-pip \
   bash \
-  build-base
+  build-base \
+  gcc \
+  musl-dev \
+  g++
 
 COPY . /app
 WORKDIR /app

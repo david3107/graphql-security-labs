@@ -3,7 +3,10 @@ MAINTAINER Davide Cioccia <d.cioccia@dcodx.com>
 RUN apk update --no-cache && apk add python3 \
 python3-dev \
 py3-pip \ 
-bash
+bash \
+gcc \
+musl-dev \
+g++
 
 COPY . /app
 WORKDIR /app
