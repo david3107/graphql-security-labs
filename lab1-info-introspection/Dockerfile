@@ -11,6 +11,7 @@ RUN apk update --no-cache && apk add python3 \
 
 COPY . /app
 WORKDIR /app
+RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt
 RUN python3 populate-database.py
 CMD [ "python3", "app.py"]
