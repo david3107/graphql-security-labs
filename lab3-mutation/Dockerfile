@@ -1,4 +1,4 @@
-FROM alpine:3.7
+FROM alpine:3.21.3
 MAINTAINER Davide Cioccia <d.cioccia@dcodx.com>
 RUN apk update --no-cache && apk add python3 \
 python3-dev \
