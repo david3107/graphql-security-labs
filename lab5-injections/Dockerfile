@@ -1,4 +1,4 @@
-FROM alpine:3.7
+FROM alpine:3.18.12
 MAINTAINER Stefan Petrushevski <stefan@zeroscience.mk>
 RUN apk update --no-cache && apk add python3 \
 python3-dev \
