@@ -5,3 +5,4 @@ flask-sqlalchemy
 graphql-core==2.2.1
 graphene==2.1.8
 graphene-sqlalchemy
+werkzeug>=3.1.5 # not directly required, pinned by Snyk to avoid a vulnerability
